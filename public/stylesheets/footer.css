@@ -1,0 +1,17 @@
+footer {
+	border-top: 1px solid #eee;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	margin-top: 40px;
+	border-top: 1px solid #eee;
+	font-weight: 500;
+}
+
+.footer-text {
+	font-weight: 400;
+}
+
+.footer-anchor {
+	color: #428bca;
+	text-decoration: none;
+}

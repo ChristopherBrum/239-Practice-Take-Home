@@ -1,0 +1,31 @@
+header {
+	background-color: #6f5499;
+	position: relative;
+	padding: 30px 15px;
+	font-size: 20px;
+	color: #cdbfe3;
+	text-align: center;
+	text-shadow: 0 1px 0 rgba(0,0,0,.1);
+	background-image: linear-gradient(to bottom,#563d7c 0,#6f5499 100%);
+	background-repeat: repeat-x;
+}
+
+h1 {
+	color:#fff;
+	font-size: 36px;
+	margin-bottom: 10px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: 500;
+	line-height: 1.1;
+}
+   
+p {
+	margin-bottom: 0;
+	font-weight: 300;
+	line-height: 1.4;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
