@@ -34,14 +34,16 @@ const CONTACT_TEMPLATE = `
 			<dr>{{contactPhone}}</dr>
 			<dt>Email:</dt>
 			<dr>{{contactEmail}}</dr>
+			<dt>Tags:</dt>
+			<dr>{{contactTags}}</dr>
 		</dl>
 	</div>
 	<div class="contact-btn-wrapper">
-		<a class="contact-btn" data-contact-id="{{contactId}}">
+		<a class="contact-btn edit-btn" data-contact-id="{{contactId}}">
 			<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAwklEQVR4nO2TQQrCQAxF5wpSPIyYVKEX6CYR1Hs4khRdegE9jngJDyK4r4xlqNW6ambXD4HJ5v3/A+PcKOccoRwZ5ZQQrnUzCUwIdNcaGJoQVIv+FlqHfRgcI7BN22kCejCA60/a8B6Unr7gpnenv/BmVnNZJoOz5c15hCc/S1BZ+IxRL33wwb80imA/NYcT6Jbyahb3NfhJbGKSnFDOhPL4NCkLn5mdhVFu77SgT0bJTaBdA70TyDU0YZSNucEo16MXvi3lBvXhmd0AAAAASUVORK5CYII=">
 			Edit
 		</a>
-		<a class="contact-btn" data-contact-id="{{contactId}}">
+		<a class="contact-btn delete-btn" data-contact-id="{{contactId}}">
 			<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAVklEQVR4nGNgGBEg1La6Icy25j8qru4gyzBMg2pIwgNvAQiQpJiBdPX0tyCMRP6oBQyjQcQwmopGYBARAoPSgidk1AVPiLYg1K7Gj0RLnoD0EG3BkAIALTpalYgNyGoAAAAASUVORK5CYII=">
 			Delete
 			</a>
@@ -49,6 +51,7 @@ const CONTACT_TEMPLATE = `
 `;
 
 const ContactManagerProto =  {
+
 	async init() {
 		this.contacts = await this.fetchAllContacts();
 		this.populateContactList();
@@ -58,6 +61,7 @@ const ContactManagerProto =  {
 	addHandlers() {
 		this.addToggleContactsHandler.call(this);
 		this.addContactCreationHandler.call(this);
+		this.addEditContactHandler.call(this);
 	},
 
 	addToggleContactsHandler() {
@@ -65,18 +69,14 @@ const ContactManagerProto =  {
 
 		[...addContactButtons].forEach((button) => {
 			button.addEventListener('click', (e) => {
-				e.preventDefault();
-				const contactDisplay = document.getElementById('contacts-wrapper');
-				const newContactFormDisplay = document.getElementById('add-contact-wrapper');
-				contactDisplay.classList.toggle('hidden');
-				newContactFormDisplay.classList.toggle('hidden');
+				this.toggleContactWithForm('Create Contact');
 			});
 		});
 	},
 
 	addContactCreationHandler() {
 		const form = document.getElementById('add-contact-form');
-
+		
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
 			formData = new FormData(form);
@@ -97,6 +97,20 @@ const ContactManagerProto =  {
 			const queryString = namesAndValues.join('&');
 			this.createContact(queryString, form);
 		});
+	},
+
+	addEditContactHandler() {
+		const contactList = document.getElementById('contacts');
+		
+		contactList.addEventListener('click', async (e) => {
+			if (e.target.classList.contains('edit-btn')) {
+				this.toggleContactWithForm('Edit Contact');
+
+				console.log(e.target.dataset.contactId)
+				// fetch contacts data
+				// fill the forn with this data
+			}
+		})
 	},
 
 	async fetchAllContacts() {
@@ -129,9 +143,9 @@ const ContactManagerProto =  {
 				},
 			});
 			if (response.status === 201) {
-				const data = await response.json();
+				const contactData = await response.json();
 				this.clearForm(form);
-				// update contacts with new contact display
+				this.displayContact(contactData);
 			} else {
 				console.log(response.status);
 			}
@@ -142,25 +156,39 @@ const ContactManagerProto =  {
 
 	populateContactList() {
 		if (this.contacts.length === 0) {
-			
+			// create UI for no contacts
 		} else {
-			const list = document.getElementById('contacts');
 			this.contacts.forEach((contact) => {
-				const template = Handlebars.compile(CONTACT_TEMPLATE);
-				const contactData = {
-					contactName: contact.full_name,
-					contactPhone: contact.phone_number,
-					contactEmail: contact.email,
-					contactId: contact.id,
-				}
-				const html = template(contactData);
-				const li = document.createElement('li');
-				li.classList.add('contact-wrapper');
-				li.innerHTML = html;
-				list.appendChild(li);
+				this.displayContact(contact);
 			});
 		}
 	},
+
+	displayContact(contact) {
+		const list = document.getElementById('contacts');
+		const template = Handlebars.compile(CONTACT_TEMPLATE);
+		const contactData = {
+			contactName: contact.full_name,
+			contactPhone: contact.phone_number,
+			contactEmail: contact.email,
+			contactTags: contact.tags,
+			contactId: contact.id,
+		};
+		const html = template(contactData);
+		const li = document.createElement('li');
+		li.classList.add('contact-wrapper');
+		li.innerHTML = html;
+		list.appendChild(li);
+	},
+
+	toggleContactWithForm(title) {
+		const contactDisplay = document.getElementById('contacts-wrapper');
+		contactDisplay.classList.toggle('hidden');
+		const newContactFormDisplay = document.getElementById('add-contact-wrapper');
+		newContactFormDisplay.classList.toggle('hidden');
+		const formTitle = document.querySelector('.form-title');
+		formTitle.textContent = title;
+	}
 
 }
 
