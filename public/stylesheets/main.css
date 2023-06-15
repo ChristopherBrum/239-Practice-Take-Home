@@ -6,16 +6,175 @@ body {
     background-color: #fff;
 }
 
-main {
-	min-height: 400px;
-}
-
 .text-center {
 	text-align: center;
 }
 
 .container {
-	width: 85%;
+	width: 970px;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.navbar {
+	min-height: 20px;
+	padding: 19px;
+	margin-bottom: 30px;
+	background-color: #f5f5f5;
+	border: 1px solid #e3e3e3;
+	border-radius: 4px;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.button {
+	color: #563d7c;
+	background-color: transparent;
+	border: 1px solid #563d7c;
+	padding: 10px 16px;
+	font-size: 18px;
+	line-height: 1.33;
+	border-radius: 4px;
+}
+
+.button:hover {
+	background-color: #563d7c;
+	color: #fff;
+	cursor: pointer;
+}
+
+.search {
+	width: 200px;
+	height: 20px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857;
+	color: #555;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+}
+
+#contacts {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.contact-wrapper {
+	box-sizing: border-box;
+	height: 200px;
+	width: 22	%;
+	padding-bottom: 25px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	margin: 10px 10px;
+	border-bottom: 1px solid #eee;
+}
+
+.contact-name {
+	font-size: 1.5rem;
+}
+
+.contact-btn {
+	color: #563d7c;
+	background-color: transparent;
+	border: 1px solid #563d7c;
+	padding: 6px 16px;
+	line-height: 1.33;
+	border-radius: 4px;
+	margin-right: 20px;
+	font-size: 0.9rem;
+}
+
+.contact-btn:hover {
+	background-color: #563d7c;
+	color: #fff;
+	cursor: pointer;
+}
+
+dt {
+	font-weight: 900;
+}
+
+.icon {
+	position: relative;
+	height: 18px;
+	top: 4px;
+}
+
+.hidden {
+	display: none;
+}
+
+#form-wrapper {
+	margin-top: 31px;
+}
+
+.form-title {
+	font-size: 1.88rem;
+	padding: 9px;
+	margin-top: 30px;
+	text-align: center;
+}
+
+form {
+	width: 100%;
+	border-top: 1px solid #eee;
+	padding: 20px 0;
+	display: grid;
+	grid-template-columns: 2.3fr max-content 5.8fr 2.3fr;
+	grid-template-rows: auto;
+	grid-template-areas: 
+		". label-a input-a ."
+		". label-b input-b ."
+		". label-c input-c ."
+		". label-d input-d ."
+		". . grid-btn-wrapper .";
+}
+
+.label-a, .label-b, .label-c, .label-d {
+	text-align: end;
+	margin-right: 30px;
+	font-weight: 900;
+	position: relative;
+	top: 7px;
+}
+
+.label-a { grid-area: label-a; }
+.label-b { grid-area: label-b; }
+.label-c { grid-area: label-c; }
+.label-d { grid-area: label-d; }
+.input-a { grid-area: input-a; }
+.input-b { grid-area: input-b; }
+.input-c { grid-area: input-c; }
+.input-d { grid-area: input-d; }
+.grid-btn-wrapper { 
+	grid-area: grid-btn-wrapper; 
+	display: flex;
+}
+
+.form-input {
+	height: 20px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	margin-bottom: 25px;
+}
+
+.submit-btn {
+	width: 100%;
+}
+
+#btn-spacer {
+	width: 60px;
 }

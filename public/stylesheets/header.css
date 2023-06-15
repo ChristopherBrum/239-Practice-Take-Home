@@ -29,3 +29,6 @@ p {
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
+.title {
+	text-decoration: none;
+}

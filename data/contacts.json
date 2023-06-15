@@ -19,5 +19,68 @@
     "email": "ph@example.com",
     "phone_number": "54321098761",
     "tags": null
+  },
+  {
+    "full_name": "Chris Brum",
+    "phone_number": "111-222-3333",
+    "email": "chris@hi.com",
+    "tags": "camping,friends",
+    "id": 4
+  },
+  {
+    "full_name": "null",
+    "phone_number": "null",
+    "email": "adrienne@hi.com",
+    "tags": "friends,family",
+    "id": 5
+  },
+  {
+    "full_name": "null",
+    "phone_number": "null",
+    "email": "adrienne@hi.com",
+    "tags": "friends,family",
+    "id": 6
+  },
+  {
+    "full_name": "Adrienne Jacob",
+    "phone_number": "123-456-7890",
+    "email": "adrienne@hi.com",
+    "tags": "friends,family",
+    "id": 7
+  },
+  {
+    "full_name": "Adrienne Jacob",
+    "phone_number": "123-456-7890",
+    "email": "adrienne@hi.com",
+    "tags": "friends,family",
+    "id": 8
+  },
+  {
+    "full_name": "Mike SMith",
+    "phone_number": "666-777-8888",
+    "email": "mike@hi.com",
+    "tags": "work",
+    "id": 9
+  },
+  {
+    "full_name": "Dana Lawls",
+    "phone_number": "999-888-7777",
+    "email": "dana@hi.com",
+    "tags": "friends",
+    "id": 10
+  },
+  {
+    "full_name": "Lilly Lass",
+    "phone_number": "345-456-5678",
+    "email": "lilly@hi.com",
+    "tags": "",
+    "id": 11
+  },
+  {
+    "full_name": "Jay Bose",
+    "phone_number": "333-222-4444",
+    "email": "jay@hi.com",
+    "tags": "",
+    "id": 12
   }
 ]

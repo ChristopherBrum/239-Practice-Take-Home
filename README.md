@@ -18,6 +18,10 @@
 	- When there are zero contacts: 
 		- displays "There is no contacts" message 
 		- "add contact" button that "drops-up" like the search function
+	- When there are contacts
+		- each contact will have their name, number and email
+		- a button to open the edit contact info (with current info filled in)
+		- delete button to delete contact
 
 - "tagging" feature: 
 	- allows you to create tags
@@ -25,4 +29,9 @@
 	- clicking on a tag will display all contatcs with that tag
 - use API to store and fetch contacts from
 
-# JS239-practice_project
+## Flow of Execution
+
+1. On load
+	- pull all contacts
+		- animation to display all contacts or display no contacts message
+	
