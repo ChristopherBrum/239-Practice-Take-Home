@@ -50,6 +50,35 @@ const CONTACT_TEMPLATE = `
 	</div>
 `;
 
+const CREATE_CONTACT_FORM_DATA = {
+	formTitle: 'Create Contact',
+	submitButtonId: 'add-contact',
+};
+
+const UPDATE_CONTACT_FORM_DATA = {
+	formTitle: 'Edit Contact',
+	submitButtonId: 'edit-contact',
+};
+
+const FORM_TEMPLATE = `
+	<h3 class="form-title">{{formTitle}}</h3>
+	<form id="add-contact-form">
+		<label class="label-a" for="name">Full name:</label>
+		<input class="input-a form-input" type="text" id="name" name="full_name">
+		<label class="label-b" for="email">Email address:</label>
+		<input class="input-b form-input" type="email" id="email" name="email">
+		<label class="label-c" for="phone">Telephone number:</label>
+		<input class="input-c form-input" type="phone" id="phone" name="phone_number">
+		<label class="label-d" for="tags">Tags (optional):</label>
+		<input class="input-d form-input" type="tags" id="tags" name="tags">
+		<div class="grid-btn-wrapper" id="btn-wrapper">
+			<button id="{{submitButtonId}}" class="button submit-btn toggle-contact" type="submit">Submit</button>
+			<div id="btn-spacer"></div>
+			<div id="cancel-btn" class="button cancel-btn toggle-contact" type="submit">Cancel</div>
+		</div>
+	</form>
+`;
+
 const ContactManagerProto =  {
 
 	async init() {
@@ -60,7 +89,6 @@ const ContactManagerProto =  {
 
 	addHandlers() {
 		this.addToggleContactsHandler.call(this);
-		this.addContactCreationHandler.call(this);
 		this.addEditContactHandler.call(this);
 	},
 
@@ -69,8 +97,15 @@ const ContactManagerProto =  {
 
 		[...addContactButtons].forEach((button) => {
 			button.addEventListener('click', (e) => {
-				this.toggleContactWithForm('Create Contact');
+				this.toggleContactWithForm( 	);
 			});
+		});
+	},
+
+	addCancelFormHandler() {
+		const cancelBtn = document.getElementById('cancel-btn');		
+		cancelBtn.addEventListener('click', (e) => {
+			this.toggleContactWithForm();
 		});
 	},
 
@@ -104,11 +139,19 @@ const ContactManagerProto =  {
 		
 		contactList.addEventListener('click', async (e) => {
 			if (e.target.classList.contains('edit-btn')) {
-				this.toggleContactWithForm('Edit Contact');
+				this.toggleContactWithForm(UPDATE_CONTACT_FORM_DATA);
 
-				console.log(e.target.dataset.contactId)
 				// fetch contacts data
-				// fill the forn with this data
+				const contactId = e.target.dataset.contactId;
+				const contactData = await this.fetchContact(contactId);
+				
+				
+				console.log(contactData, 'line 112');
+				
+
+
+				// we've gotten the contact data, now we need to fill the form in
+				// then make sure the form updates the contact info instead of creating a new contact
 			}
 		})
 	},
@@ -126,11 +169,17 @@ const ContactManagerProto =  {
 		}
 	},
 
-	clearForm(form) {
-		const inputs = form.querySelectorAll('input');
-		inputs.forEach((input) => {
-			input.value = '';
-		})
+	async fetchContact(contactId) {
+		try {
+			const response = await fetch(`http://localhost:3000/api/contacts/${contactId}`);
+			if (response.status === 200) {
+				return await response.json();
+			} else {
+				console.log(response.status);
+			}
+		} catch (err) {
+			console.log(err);
+		}
 	},
 
 	async createContact(queryString, form) {
@@ -146,6 +195,7 @@ const ContactManagerProto =  {
 				const contactData = await response.json();
 				this.clearForm(form);
 				this.displayContact(contactData);
+				this.toggleContactWithForm()
 			} else {
 				console.log(response.status);
 			}
@@ -181,13 +231,25 @@ const ContactManagerProto =  {
 		list.appendChild(li);
 	},
 
-	toggleContactWithForm(title) {
+	clearForm(form) {
+		const inputs = form.querySelectorAll('input');
+		inputs.forEach((input) => {
+			input.value = '';
+		})
+	},
+
+	toggleContactWithForm(formData=CREATE_CONTACT_FORM_DATA) {
 		const contactDisplay = document.getElementById('contacts-wrapper');
 		contactDisplay.classList.toggle('hidden');
 		const newContactFormDisplay = document.getElementById('add-contact-wrapper');
 		newContactFormDisplay.classList.toggle('hidden');
-		const formTitle = document.querySelector('.form-title');
-		formTitle.textContent = title;
+		const template = Handlebars.compile(FORM_TEMPLATE);
+		const html = template(formData);
+		newContactFormDisplay.innerHTML = html;
+		if (!newContactFormDisplay.classList.contains('hidden')) {
+			this.addCancelFormHandler.call(this);
+			this.addContactCreationHandler.call(this);
+		}
 	}
 
 }
