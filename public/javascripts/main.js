@@ -50,6 +50,25 @@ const CONTACT_TEMPLATE = `
 	</div>
 `;
 
+const FORM_TEMPLATE = `
+<h3 class="form-title">{{formTitle}}</h3>
+<form id="contact-form">
+<label class="label-a" for="name">Full name:</label>
+<input class="input-a form-input" type="text" id="name" name="full_name">
+<label class="label-b" for="email">Email address:</label>
+<input class="input-b form-input" type="email" id="email" name="email">
+<label class="label-c" for="phone">Telephone number:</label>
+<input class="input-c form-input" type="phone" id="phone" name="phone_number">
+<label class="label-d" for="tags">Tags (optional):</label>
+<input class="input-d form-input" type="tags" id="tags" name="tags">
+<div class="grid-btn-wrapper" id="btn-wrapper">
+<button id="{{submitButtonId}}" class="button submit-btn toggle-contact" type="submit">Submit</button>
+<div id="btn-spacer"></div>
+<div id="cancel-btn" class="button cancel-btn toggle-contact" type="submit">Cancel</div>
+</div>
+</form>
+`;
+
 const CREATE_CONTACT_FORM_DATA = {
 	formTitle: 'Create Contact',
 	submitButtonId: 'add-contact',
@@ -59,25 +78,6 @@ const UPDATE_CONTACT_FORM_DATA = {
 	formTitle: 'Edit Contact',
 	submitButtonId: 'edit-contact',
 };
-
-const FORM_TEMPLATE = `
-	<h3 class="form-title">{{formTitle}}</h3>
-	<form id="add-contact-form">
-		<label class="label-a" for="name">Full name:</label>
-		<input class="input-a form-input" type="text" id="name" name="full_name">
-		<label class="label-b" for="email">Email address:</label>
-		<input class="input-b form-input" type="email" id="email" name="email">
-		<label class="label-c" for="phone">Telephone number:</label>
-		<input class="input-c form-input" type="phone" id="phone" name="phone_number">
-		<label class="label-d" for="tags">Tags (optional):</label>
-		<input class="input-d form-input" type="tags" id="tags" name="tags">
-		<div class="grid-btn-wrapper" id="btn-wrapper">
-			<button id="{{submitButtonId}}" class="button submit-btn toggle-contact" type="submit">Submit</button>
-			<div id="btn-spacer"></div>
-			<div id="cancel-btn" class="button cancel-btn toggle-contact" type="submit">Cancel</div>
-		</div>
-	</form>
-`;
 
 const ContactManagerProto =  {
 
@@ -89,7 +89,7 @@ const ContactManagerProto =  {
 
 	addHandlers() {
 		this.addToggleContactsHandler.call(this);
-		this.addEditContactHandler.call(this);
+		this.addEditFormHandler.call(this);
 	},
 
 	addToggleContactsHandler() {
@@ -110,50 +110,75 @@ const ContactManagerProto =  {
 	},
 
 	addContactCreationHandler() {
-		const form = document.getElementById('add-contact-form');
+		const form = document.getElementById('contact-form');
 		
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
-			formData = new FormData(form);
-			const names = ['full_name', 'email', 'phone_number', 'tags'];
-			const values = names.map((paramName) => {
-				let value = formData.get(paramName)
-				if (paramName === 'tags') {
-					value = value.toLowerCase().split(' '). join(',');
-				}
-				return value;
-			});
-
-			const namesAndValues = names.reduce((array, name, index) => {
-				array.push(name + '=' + values[index]);
-				return array;
-			}, []);
-
-			const queryString = namesAndValues.join('&');
+			const queryString = this.encodeFormData(form);
 			this.createContact(queryString, form);
+			this.clearForm(form);
 		});
 	},
 
-	addEditContactHandler() {
+	addEditFormHandler() {
 		const contactList = document.getElementById('contacts');
 		
-		contactList.addEventListener('click', async (e) => {
+		contactList.addEventListener('click', (e) => {
 			if (e.target.classList.contains('edit-btn')) {
-				this.toggleContactWithForm(UPDATE_CONTACT_FORM_DATA);
-
-				// fetch contacts data
 				const contactId = e.target.dataset.contactId;
-				const contactData = await this.fetchContact(contactId);
+				this.toggleContactWithForm(UPDATE_CONTACT_FORM_DATA);
+				this.loadEditForm(contactId);
+				const updateBtn = document.getElementById('edit-contact');
+				const form = document.getElementById('contact-form');
 				
-				
-				console.log(contactData, 'line 112');
-				
-
-
-				// we've gotten the contact data, now we need to fill the form in
-				// then make sure the form updates the contact info instead of creating a new contact
+				updateBtn.addEventListener('click', (e) => {
+					const queryString = this.encodeFormData(form);
+					this.updateContact(queryString, contactId);
+					this.clearForm(form);
+				});
 			}
 		})
+	},
+
+	async loadEditForm(contactId) {
+		const contactData = await this.fetchContact(contactId);
+		const form = document.getElementById('contact-form');
+		const inputs = form.getElementsByTagName('input');
+		
+		[...inputs].forEach((input, index) => {
+			let value = contactData[input.name];
+			if (!value) {
+				return ''
+			} else if (input.name === 'tags' && value.length > 0) {
+				value = value.split(',').join(' ');
+			}
+			input.value = value;
+		});
+	},
+	
+	encodeFormData(form) {		
+		formData = new FormData(form);
+		const names = ['full_name', 'email', 'phone_number', 'tags'];
+		let values = names.map((paramName) => {
+			let value = formData.get(paramName);
+			if (!value) {
+				return '';
+			} else if (paramName === 'tags') {
+				value = value.toLowerCase().split(' '). join(',');
+			}
+			value = encodeURIComponent(value);
+			return value;
+		});
+
+		values = values.filter(value => value);
+
+		const namesAndValues = values.reduce((array, value, index) => {
+			array.push(names[index] + '=' + value);
+			return array;
+		}, []);
+
+		const queryString = namesAndValues.join('&');
+		return queryString;
 	},
 
 	async fetchAllContacts() {
@@ -182,7 +207,7 @@ const ContactManagerProto =  {
 		}
 	},
 
-	async createContact(queryString, form) {
+	async createContact(queryString) {
 		try {
 			const response = await fetch('http://localhost:3000/api/contacts/', {
 				method: 'POST',
@@ -193,10 +218,26 @@ const ContactManagerProto =  {
 			});
 			if (response.status === 201) {
 				const contactData = await response.json();
-				this.clearForm(form);
 				this.displayContact(contactData);
 				this.toggleContactWithForm()
 			} else {
+				console.log(response.status);
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	},
+
+	async updateContact(queryString, contactId) {
+		try {
+			const reponse = await fetch(`http://localhost:3000/api/contacts/${contactId}`, {
+				method: 'PUT', 
+				body: queryString,
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+			});
+			if (reponse.status != 201) {
 				console.log(response.status);
 			}
 		} catch (err) {
@@ -248,10 +289,17 @@ const ContactManagerProto =  {
 		newContactFormDisplay.innerHTML = html;
 		if (!newContactFormDisplay.classList.contains('hidden')) {
 			this.addCancelFormHandler.call(this);
-			this.addContactCreationHandler.call(this);
+
+			if (formData['formTitle'] === 'Create Contact') {
+				this.addContactCreationHandler.call(this);
+
+			} else {
+
+				// add edit contact handler
+			}
 		}
 	}
-
+	
 }
 
 document.addEventListener('DOMContentLoaded', () => {
