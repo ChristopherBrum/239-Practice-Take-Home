@@ -90,6 +90,7 @@ const ContactManagerProto =  {
 	addHandlers() {
 		this.addToggleContactsHandler.call(this);
 		this.addEditFormHandler.call(this);
+		this.addDeleteContactHandler.call(this);
 	},
 
 	addToggleContactsHandler() {
@@ -138,6 +139,21 @@ const ContactManagerProto =  {
 				});
 			}
 		})
+	},
+
+	addDeleteContactHandler() {
+		const contacts = document.getElementById('contacts');
+
+		contacts.addEventListener('click', (e) => {
+			const contactId = e.target.dataset.contactId;
+			if (contactId) {
+				let confirmed = confirm('Do you want to delete the contact?');
+				if (confirmed) {
+					const contactContainer = e.target.parentNode.parentNode;
+					this.deleteContact(contactId, contactContainer);
+				}
+			}
+		});
 	},
 
 	async loadEditForm(contactId) {
@@ -241,6 +257,21 @@ const ContactManagerProto =  {
 				console.log(response.status);
 			}
 		} catch (err) {
+			console.log(err);
+		}
+	},
+	
+	async deleteContact(contactId, contactContainer) {
+		try {
+			const response = await fetch(`http://localhost:3000/api/contacts/${contactId}`, {
+				method: 'DELETE',
+			});
+			if (response.status === 204) {
+				contactContainer.remove();
+			} else {
+				console.log(response.status);
+			}
+		} catch(err) {
 			console.log(err);
 		}
 	},
