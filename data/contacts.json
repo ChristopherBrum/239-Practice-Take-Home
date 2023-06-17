@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "full_name": "Adrienne Jacob",
+    "phone_number": "111-222-3333",
+    "email": "adrienne@hi.com",
+    "tags": "family",
+    "id": 1
+  },
+  {
+    "full_name": "Bob O'Leary",
+    "phone_number": "222-333-4444",
+    "email": "bob@hi.com",
+    "tags": "friends",
+    "id": 2
+  },
+  {
+    "full_name": "Luke Andrade",
+    "phone_number": "333-444-5555",
+    "email": "luke@hi.com",
+    "tags": "friends",
+    "id": 3
+  }
+]

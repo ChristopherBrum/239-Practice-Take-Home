@@ -44,7 +44,7 @@ const CONTACT_TEMPLATE = `
 			Edit
 		</a>
 		<a class="contact-btn delete-btn" data-contact-id="{{contactId}}">
-			<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAVklEQVR4nGNgGBEg1La6Icy25j8qru4gyzBMg2pIwgNvAQiQpJiBdPX0tyCMRP6oBQyjQcQwmopGYBARAoPSgidk1AVPiLYg1K7Gj0RLnoD0EG3BkAIALTpalYgNyGoAAAAASUVORK5CYII=">
+			<img class="icon delete-btn" data-contact-id="{{contactId}}" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAVklEQVR4nGNgGBEg1La6Icy25j8qru4gyzBMg2pIwgNvAQiQpJiBdPX0tyCMRP6oBQyjQcQwmopGYBARAoPSgidk1AVPiLYg1K7Gj0RLnoD0EG3BkAIALTpalYgNyGoAAAAASUVORK5CYII=">
 			Delete
 			</a>
 	</div>
@@ -118,6 +118,7 @@ const ContactManagerProto =  {
 			const queryString = this.encodeFormData(form);
 			this.createContact(queryString, form);
 			this.clearForm(form);
+			this.clearNoContactsContainer();
 		});
 	},
 
@@ -144,13 +145,14 @@ const ContactManagerProto =  {
 	addDeleteContactHandler() {
 		const contacts = document.getElementById('contacts');
 
-		contacts.addEventListener('click', (e) => {
+		contacts.addEventListener('click', async (e) => {
 			const contactId = e.target.dataset.contactId;
-			if (contactId) {
+			if (contactId && e.target.classList.contains('delete-btn')) {
 				let confirmed = confirm('Do you want to delete the contact?');
 				if (confirmed) {
 					const contactContainer = e.target.parentNode.parentNode;
-					this.deleteContact(contactId, contactContainer);
+					await this.deleteContact(contactId, contactContainer);
+					if (this.contacts.length === 0) this.populateContactList();
 				}
 			}
 		});
@@ -234,6 +236,7 @@ const ContactManagerProto =  {
 			});
 			if (response.status === 201) {
 				const contactData = await response.json();
+				this.contacts.push(contactData);
 				this.displayContact(contactData);
 				this.toggleContactWithForm()
 			} else {
@@ -267,6 +270,7 @@ const ContactManagerProto =  {
 				method: 'DELETE',
 			});
 			if (response.status === 204) {
+				this.contacts = this.contacts.filter((contact) => contact.id != contactId);
 				contactContainer.remove();
 			} else {
 				console.log(response.status);
@@ -278,7 +282,7 @@ const ContactManagerProto =  {
 
 	populateContactList() {
 		if (this.contacts.length === 0) {
-			// create UI for no contacts
+			this.displayWhenNoContacts();
 		} else {
 			this.contacts.forEach((contact) => {
 				this.displayContact(contact);
@@ -303,11 +307,34 @@ const ContactManagerProto =  {
 		list.appendChild(li);
 	},
 
+	displayWhenNoContacts() {
+		const contactsContainer = document.getElementById('contacts');
+		const div = document.createElement('div');
+		const h3 = document.createElement('h3');
+		const button = document.createElement('div');
+		div.id = 'no-contacts-container';
+		h3.id = 'no-contacts-title';
+		button.id = 'no-contacts-button';
+		h3.textContent = 'There are no contacts';
+		button.textContent = 'Add Contact';
+		div.appendChild(h3);
+		div.appendChild(button);
+		contactsContainer.appendChild(div);
+		button.addEventListener('click', (e) => {
+			this.toggleContactWithForm();
+		});
+	},
+
 	clearForm(form) {
 		const inputs = form.querySelectorAll('input');
 		inputs.forEach((input) => {
 			input.value = '';
 		})
+	},
+
+	clearNoContactsContainer() {
+		const noContactsContainer = document.getElementById('no-contacts-container');
+		if (noContactsContainer) noContactsContainer.remove();
 	},
 
 	toggleContactWithForm(formData=CREATE_CONTACT_FORM_DATA) {
