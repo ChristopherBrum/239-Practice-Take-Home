@@ -249,6 +249,7 @@ const ContactManagerProto =  {
 			});
 			if (response.status === 204) {
 				this.contacts = this.contacts.filter((contact) => contact.id != contactId);
+				this.removeContactsFromTags(contactId);
 				contactContainer.remove();
 			} else {
 				console.log(response.status);
@@ -300,7 +301,16 @@ const ContactManagerProto =  {
 
 			contactBody.appendChild(tagElement);
 		});
+	},
 
+	removeContactsFromTags(contactId) {
+		const tagKeys = Object.keys(this.tags);
+
+		console.log(tagKeys)
+		tagKeys.forEach(key => {
+			filteredArray = this.tags[key].filter(contact => contact.id != contactId);
+			this.tags[key] = filteredArray;
+		});
 	},
 
 	displayContact(contact) {
