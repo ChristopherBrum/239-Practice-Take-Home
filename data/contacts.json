@@ -17,7 +17,49 @@
     "full_name": "Luke Andrade",
     "phone_number": "333-444-5555",
     "email": "luke@hi.com",
-    "tags": "friends",
+    "tags": "friends,camping",
     "id": 3
+  },
+  {
+    "full_name": "Ellen Williams",
+    "phone_number": "444-555-6666",
+    "email": "ellen@hi.com",
+    "tags": "friends",
+    "id": 4
+  },
+  {
+    "full_name": "Vicky Jarvis",
+    "phone_number": "555-666-7777",
+    "email": "vicky@hi.com",
+    "tags": "friends",
+    "id": 5
+  },
+  {
+    "full_name": "Erin Yawtaw",
+    "phone_number": "123-234-3456",
+    "email": "erin@hi.com",
+    "tags": "friends,camping",
+    "id": 6
+  },
+  {
+    "full_name": "Andrea Brum",
+    "phone_number": "222-3333-2222",
+    "email": "andrea@hi.com",
+    "tags": "family",
+    "id": 7
+  },
+  {
+    "full_name": "Ashley Brum",
+    "phone_number": "333-333-3333",
+    "email": "ashley@hi.com",
+    "tags": "family",
+    "id": 8
+  },
+  {
+    "full_name": "Steve Brum",
+    "phone_number": "444-444-4444",
+    "email": "steve@hi.com",
+    "tags": "family,camping",
+    "id": 9
   }
 ]

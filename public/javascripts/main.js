@@ -29,13 +29,13 @@ const CONTACT_TEMPLATE = `
 		<h3 class="contact-name">{{contactName}}</h3>
 	</div>
 	<div class="contact-body">
-		<dl>
+		<dl class="contact-body-list">
 			<dt>Phone Number:</dt>
 			<dr>{{contactPhone}}</dr>
 			<dt>Email:</dt>
 			<dr>{{contactEmail}}</dr>
 			<dt>Tags:</dt>
-			<dr>{{contactTags}}</dr>
+			<dr id="tag{{contactId}}">{{contactTags}}</dr>
 		</dl>
 	</div>
 	<div class="contact-btn-wrapper">
@@ -51,23 +51,25 @@ const CONTACT_TEMPLATE = `
 `;
 
 const FORM_TEMPLATE = `
-<h3 class="form-title">{{formTitle}}</h3>
-<form id="contact-form">
-<label class="label-a" for="name">Full name:</label>
-<input class="input-a form-input" type="text" id="name" name="full_name">
-<label class="label-b" for="email">Email address:</label>
-<input class="input-b form-input" type="email" id="email" name="email">
-<label class="label-c" for="phone">Telephone number:</label>
-<input class="input-c form-input" type="phone" id="phone" name="phone_number">
-<label class="label-d" for="tags">Tags (optional):</label>
-<input class="input-d form-input" type="tags" id="tags" name="tags">
-<div class="grid-btn-wrapper" id="btn-wrapper">
-<button id="{{submitButtonId}}" class="button submit-btn toggle-contact" type="submit">Submit</button>
-<div id="btn-spacer"></div>
-<div id="cancel-btn" class="button cancel-btn toggle-contact" type="submit">Cancel</div>
-</div>
-</form>
+	<h3 class="form-title">{{formTitle}}</h3>
+	<form id="contact-form">
+		<label class="label-a" for="name">Full name:</label>
+		<input class="input-a form-input" type="text" id="name" name="full_name">
+		<label class="label-b" for="email">Email address:</label>
+		<input class="input-b form-input" type="email" id="email" name="email">
+		<label class="label-c" for="phone">Telephone number:</label>
+		<input class="input-c form-input" type="phone" id="phone" name="phone_number">
+		<label class="label-d" for="tags">Tags (optional):</label>
+		<input class="input-d form-input tags" type="tags" name="tags">
+		<div class="grid-btn-wrapper" id="btn-wrapper">
+			<button id="{{submitButtonId}}" class="button submit-btn toggle-contact" type="submit">Submit</button>
+			<div id="btn-spacer"></div>
+			<div id="cancel-btn" class="button cancel-btn toggle-contact" type="submit">Cancel</div>
+		</div>
+	</form>
 `;
+
+const TAG_TEMPLATE = `<a class="tag-link" name"{{tagName}}">{{tagName}}</a>`;
 
 const CREATE_CONTACT_FORM_DATA = {
 	formTitle: 'Create Contact',
@@ -83,6 +85,7 @@ const ContactManagerProto =  {
 
 	async init() {
 		this.contacts = await this.fetchAllContacts();
+		this.tags = {};
 		this.populateContactList();
 		this.addHandlers();
 	},
@@ -173,31 +176,6 @@ const ContactManagerProto =  {
 			input.value = value;
 		});
 	},
-	
-	encodeFormData(form) {		
-		formData = new FormData(form);
-		const names = ['full_name', 'email', 'phone_number', 'tags'];
-		let values = names.map((paramName) => {
-			let value = formData.get(paramName);
-			if (!value) {
-				return '';
-			} else if (paramName === 'tags') {
-				value = value.toLowerCase().split(' '). join(',');
-			}
-			value = encodeURIComponent(value);
-			return value;
-		});
-
-		values = values.filter(value => value);
-
-		const namesAndValues = values.reduce((array, value, index) => {
-			array.push(names[index] + '=' + value);
-			return array;
-		}, []);
-
-		const queryString = namesAndValues.join('&');
-		return queryString;
-	},
 
 	async fetchAllContacts() {
 		try {
@@ -243,7 +221,7 @@ const ContactManagerProto =  {
 				console.log(response.status);
 			}
 		} catch (err) {
-			console.log(err);
+			console.log(err, err.stack);
 		}
 	},
 
@@ -280,14 +258,49 @@ const ContactManagerProto =  {
 		}
 	},
 
-	populateContactList() {
-		if (this.contacts.length === 0) {
+	populateContactList(contactList=this.contacts) {
+		const contactContainer = document.getElementById('contacts');
+		contactContainer.innerHTML = '';
+
+		if (contactList.length === 0) {
 			this.displayWhenNoContacts();
 		} else {
-			this.contacts.forEach((contact) => {
+			contactList.forEach((contact) => {
 				this.displayContact(contact);
 			});
 		}
+	},
+
+	linkTags(li, contact) {
+		if (!contact.tags || contact.tags.length === 0) return;
+		const contactBody = li.getElementsByClassName('contact-body-list')[0];
+		const tagId = 'tag' + String(contact.id);
+		const tagElement = document.getElementById(tagId);
+		
+		contact.tags.split(',').forEach((tag) => {
+			const span = document.createElement('span');
+			span.classList.add('tag-link');
+			span.textContent = tag;
+			span.dataset.tag = tag;
+
+			if (this.tags[tag]) {
+				let contactExists = this.tags[tag].some(currentContact => currentContact.id === contact.id);
+				if (!contactExists) this.tags[tag].push(contact);
+			}	else {
+				this.tags[tag] = [contact];
+			}
+
+			tagElement.append(span, " ")
+
+			span.addEventListener('click', (e) => {
+				const targetTag = e.target.dataset.tag;
+				const tagContacts = this.tags[targetTag];
+				this.populateContactList(tagContacts);
+			});
+
+			contactBody.appendChild(tagElement);
+		});
+
 	},
 
 	displayContact(contact) {
@@ -297,7 +310,6 @@ const ContactManagerProto =  {
 			contactName: contact.full_name,
 			contactPhone: contact.phone_number,
 			contactEmail: contact.email,
-			contactTags: contact.tags,
 			contactId: contact.id,
 		};
 		const html = template(contactData);
@@ -305,6 +317,8 @@ const ContactManagerProto =  {
 		li.classList.add('contact-wrapper');
 		li.innerHTML = html;
 		list.appendChild(li);
+
+		this.linkTags(li, contact);
 	},
 
 	displayWhenNoContacts() {
@@ -335,6 +349,31 @@ const ContactManagerProto =  {
 	clearNoContactsContainer() {
 		const noContactsContainer = document.getElementById('no-contacts-container');
 		if (noContactsContainer) noContactsContainer.remove();
+	},
+
+	encodeFormData(form) {		
+		formData = new FormData(form);
+		const names = ['full_name', 'email', 'phone_number', 'tags'];
+		let values = names.map((paramName) => {
+			let value = formData.get(paramName);
+			if (!value) {
+				return '';
+			} else if (paramName === 'tags') {
+				value = value.toLowerCase().split(' '). join(',');
+			}
+			value = encodeURIComponent(value);
+			return value;
+		});
+
+		values = values.filter(value => value);
+
+		const namesAndValues = values.reduce((array, value, index) => {
+			array.push(names[index] + '=' + value);
+			return array;
+		}, []);
+
+		const queryString = namesAndValues.join('&');
+		return queryString;
 	},
 
 	toggleContactWithForm(formData=CREATE_CONTACT_FORM_DATA) {

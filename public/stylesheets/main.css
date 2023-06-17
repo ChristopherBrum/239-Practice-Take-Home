@@ -145,6 +145,14 @@ dt {
 	font-weight: 900;
 }
 
+.tag-link {
+	color: darkred;
+}
+
+.tag-link:hover {
+	cursor: pointer;
+}
+
 .icon {
 	position: relative;
 	height: 18px;
