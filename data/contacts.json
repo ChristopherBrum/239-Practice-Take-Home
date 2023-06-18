@@ -14,13 +14,6 @@
     "id": 2
   },
   {
-    "full_name": "Jacob Harris",
-    "phone_number": "222-333-4444",
-    "email": "jacob@hi.com",
-    "tags": "friends,music",
-    "id": 3
-  },
-  {
     "full_name": "Al Hernandez",
     "phone_number": "222-333-4444",
     "email": "al@hi.com",
@@ -61,5 +54,82 @@
     "email": "priyesh@hi.com",
     "tags": "friends,portland",
     "id": 9
+  },
+  {
+    "full_name": "Andrea Brum",
+    "phone_number": "765-764-2345",
+    "email": "andrea@hi.com",
+    "tags": "family,siblings",
+    "id": 10
+  },
+  {
+    "full_name": "Ashley Brum",
+    "phone_number": "523-674-8785",
+    "email": "ashley@hi.com",
+    "tags": "family,siblings",
+    "id": 11
+  },
+  {
+    "full_name": "Jacob Harris",
+    "phone_number": "322-244-1155",
+    "email": "jacob@hi.com",
+    "tags": "friends,music,",
+    "id": 12
+  },
+  {
+    "full_name": "Teun Oome",
+    "phone_number": "123-234-4356",
+    "email": "teun@hi.com",
+    "tags": "family",
+    "id": 13
+  },
+  {
+    "full_name": "James Anderson",
+    "phone_number": "333-342-4356",
+    "email": "james@hi.com",
+    "tags": "friends",
+    "id": 14
+  },
+  {
+    "full_name": "Ana Jacob",
+    "phone_number": "433-534-6788",
+    "email": "ana@hi.com",
+    "tags": "family",
+    "id": 15
+  },
+  {
+    "full_name": "Gus Jacob ",
+    "phone_number": "222-333-4444",
+    "email": "gus@hi.com",
+    "tags": "family",
+    "id": 16
+  },
+  {
+    "full_name": "Joe Jacob",
+    "phone_number": "111-222-3333",
+    "email": "joe@hi.com",
+    "tags": "family",
+    "id": 17
+  },
+  {
+    "full_name": "Leeya Davis",
+    "phone_number": "333-333-3333",
+    "email": "leeya@hi.com",
+    "tags": "friends,launch_school",
+    "id": 19
+  },
+  {
+    "full_name": "Spencer Wightman",
+    "phone_number": "444-444-4444",
+    "email": "spencer@hi.com",
+    "tags": "friends,launch_school",
+    "id": 20
+  },
+  {
+    "full_name": "Maddie Woodrum",
+    "phone_number": "555-555-5555",
+    "email": "maddie@hi.com",
+    "tags": "friends,launch_school",
+    "id": 21
   }
 ]

@@ -94,6 +94,7 @@ const ContactManagerProto =  {
 		this.addToggleContactsHandler.call(this);
 		this.addEditFormHandler.call(this);
 		this.addDeleteContactHandler.call(this);
+		this.addSearchHandler.call(this);
 	},
 
 	addToggleContactsHandler() {
@@ -161,6 +162,21 @@ const ContactManagerProto =  {
 		});
 	},
 
+	addSearchHandler() {
+		const searchInput = document.getElementById('search');
+
+		searchInput.addEventListener('input', (e) => {
+			const searchValue = e.target.value;
+			const filteredContacts = this.contacts.filter((contact) => {
+				const contactNameSlice = contact.full_name.slice(0, searchValue.length).toLowerCase();
+				const searchValueLowercase = searchValue.toLowerCase().trim();
+				return contactNameSlice === searchValueLowercase;
+			});
+
+			this.populateContactList(filteredContacts);
+		});
+	},
+
 	async loadEditForm(contactId) {
 		const contactData = await this.fetchContact(contactId);
 		const form = document.getElementById('contact-form');
@@ -216,6 +232,7 @@ const ContactManagerProto =  {
 				const contactData = await response.json();
 				this.contacts.push(contactData);
 				this.displayContact(contactData);
+				this.populateContactList();
 				this.toggleContactWithForm()
 			} else {
 				console.log(response.status);
