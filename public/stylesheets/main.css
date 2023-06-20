@@ -103,6 +103,41 @@ body {
 #contacts {
 	display: flex;
 	flex-wrap: wrap;
+	overflow: hidden;
+  animation-duration: 1.5s;
+  animation-name: animate-fade;
+  animation-fill-mode: backwards;
+	transition: 1.5s;
+}
+
+.add-content-animation {
+	overflow: hidden;
+  animation-duration: 1.25s;
+  animation-name: animate-fade-form;
+  animation-fill-mode: backwards;
+	transition: 1.25s;
+}
+
+@keyframes animate-fade {
+  0% { 
+		opacity: 0; 
+		max-height: 0;
+	}
+  100% { 
+		opacity: 1; 
+		max-height: 3000px;
+	}
+}
+
+@keyframes animate-fade-form {
+  0% { 
+		opacity: 0; 
+		max-height: 0;
+	}
+  100% { 
+		opacity: 1; 
+		max-height: 1000px;
+	}
 }
 
 .contact-wrapper {

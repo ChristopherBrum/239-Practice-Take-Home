@@ -69,8 +69,6 @@ const FORM_TEMPLATE = `
 	</form>
 `;
 
-const TAG_TEMPLATE = `<a class="tag-link" name"{{tagName}}">{{tagName}}</a>`;
-
 const CREATE_CONTACT_FORM_DATA = {
 	formTitle: 'Create Contact',
 	submitButtonId: 'add-contact',
@@ -101,15 +99,15 @@ const ContactManagerProto = {
 		const addContactButtons = document.getElementsByClassName('toggle-contact');
 
 		[...addContactButtons].forEach((button) => {
-			button.addEventListener('click', (e) => {
-				this.toggleContactWithForm( 	);
+			button.addEventListener('click', () => {
+				this.toggleContactWithForm();
 			});
 		});
 	},
 
 	addCancelFormHandler() {
 		const cancelBtn = document.getElementById('cancel-btn');		
-		cancelBtn.addEventListener('click', (e) => {
+		cancelBtn.addEventListener('click', () => {
 			this.toggleContactWithForm();
 		});
 	},
@@ -137,7 +135,7 @@ const ContactManagerProto = {
 				const updateBtn = document.getElementById('edit-contact');
 				const form = document.getElementById('contact-form');
 				
-				updateBtn.addEventListener('click', (e) => {
+				updateBtn.addEventListener('click', () => {
 					const queryString = this.encodeFormData(form);
 					this.updateContact(queryString, contactId);
 					this.clearForm(form);
@@ -182,7 +180,7 @@ const ContactManagerProto = {
 		const form = document.getElementById('contact-form');
 		const inputs = form.getElementsByTagName('input');
 		
-		[...inputs].forEach((input, index) => {
+		[...inputs].forEach((input) => {
 			let value = contactData[input.name];
 			if (!value) {
 				return ''
@@ -244,14 +242,14 @@ const ContactManagerProto = {
 
 	async updateContact(queryString, contactId) {
 		try {
-			const reponse = await fetch(`http://localhost:3000/api/contacts/${contactId}`, {
+			const response = await fetch(`http://localhost:3000/api/contacts/${contactId}`, {
 				method: 'PUT', 
 				body: queryString,
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
 				},
 			});
-			if (reponse.status != 201) {
+			if (response.status != 201) {
 				console.log(response.status);
 			}
 		} catch (err) {
@@ -322,10 +320,8 @@ const ContactManagerProto = {
 
 	removeContactsFromTags(contactId) {
 		const tagKeys = Object.keys(this.tags);
-
-		console.log(tagKeys)
 		tagKeys.forEach(key => {
-			filteredArray = this.tags[key].filter(contact => contact.id != contactId);
+			let filteredArray = this.tags[key].filter(contact => contact.id != contactId);
 			this.tags[key] = filteredArray;
 		});
 	},
@@ -361,7 +357,7 @@ const ContactManagerProto = {
 		div.appendChild(h3);
 		div.appendChild(button);
 		contactsContainer.appendChild(div);
-		button.addEventListener('click', (e) => {
+		button.addEventListener('click', () => {
 			this.toggleContactWithForm();
 		});
 	},
@@ -379,8 +375,9 @@ const ContactManagerProto = {
 	},
 
 	encodeFormData(form) {		
-		formData = new FormData(form);
+		const formData = new FormData(form);
 		const names = ['full_name', 'email', 'phone_number', 'tags'];
+
 		let values = names.map((paramName) => {
 			let value = formData.get(paramName);
 			if (!value) {
@@ -388,8 +385,7 @@ const ContactManagerProto = {
 			} else if (paramName === 'tags') {
 				value = value.toLowerCase().split(' '). join(',');
 			}
-			value = encodeURIComponent(value);
-			return value;
+			return encodeURIComponent(value);
 		});
 
 		values = values.filter(value => value);
@@ -408,23 +404,21 @@ const ContactManagerProto = {
 		contactDisplay.classList.toggle('hidden');
 		const newContactFormDisplay = document.getElementById('add-contact-wrapper');
 		newContactFormDisplay.classList.toggle('hidden');
+		newContactFormDisplay.classList.add('add-content-animation');
 		const template = Handlebars.compile(FORM_TEMPLATE);
 		const html = template(formData);
 		newContactFormDisplay.innerHTML = html;
+
 		if (!newContactFormDisplay.classList.contains('hidden')) {
 			this.addCancelFormHandler.call(this);
 
 			if (formData['formTitle'] === 'Create Contact') {
 				this.addContactCreationHandler.call(this);
-
-			} else {
-
-				// add edit contact handler
 			}
 		}
 	}
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	const contactManager = Object.create(ContactManagerProto).init();
+	Object.create(ContactManagerProto).init();
 });
