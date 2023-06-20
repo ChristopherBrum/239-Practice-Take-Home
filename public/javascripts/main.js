@@ -81,7 +81,7 @@ const UPDATE_CONTACT_FORM_DATA = {
 	submitButtonId: 'edit-contact',
 };
 
-const ContactManagerProto =  {
+const ContactManagerProto = {
 
 	async init() {
 		this.contacts = await this.fetchAllContacts();
@@ -423,7 +423,6 @@ const ContactManagerProto =  {
 			}
 		}
 	}
-	
 }
 
 document.addEventListener('DOMContentLoaded', () => {
