@@ -1,4 +1,6 @@
-# JS239 Practice Project
+# 239 Practice Take Home
+
+A simple frontend take-home application built with vanilla JavaScript
 
 ## Features to Implement
 
